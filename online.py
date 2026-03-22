@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template_string
 import pandas as pd
+import pytz
 import requests
 from io import BytesIO
 import re
@@ -139,7 +140,8 @@ def home():
             if not nome:
                 continue
 
-            hora = datetime.now().hour
+            fuso_sp = pytz.timezone('America/Sao_Paulo')
+            hora = datetime.now(fuso_sp).hour
             escala_tipo = escala.lower()
 
             # 🔥 LÓGICA DE STATUS
