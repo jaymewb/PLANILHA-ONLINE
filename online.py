@@ -95,12 +95,15 @@ HTML = """
 
     <p>🔤 Letra: 
         <b>
-        {% set l = p.letra|string|trim|lower %}
+        {# Lógica corrigida para garantir que a letra apareça e seja classificada corretamente #}
+        {% set l = p.letra|string|trim|upper %}
 
-        {% if l in ['a','c','e','g','i','k','m','o','q','s','u','w','y'] %}
-            ÍMPAR ({{l|upper}})
-        {% elif l in ['b','d','f','h','j','l','n','p','r','t','v','x','z'] %}
-            PAR ({{l|upper}})
+        {% if l in ['A','C','E','G','I','K','M','O','Q','S','U','W','Y'] %}
+            ÍMPAR ({{l}})
+        {% elif l in ['B','D','F','H','J','L','N','P','R','T','V','X','Z'] %}
+            PAR ({{l}})
+        {% elif l and l != "" and l != "NAN" %}
+            {{l}}
         {% else %}
             ---
         {% endif %}
@@ -166,13 +169,11 @@ updateTimers();
 def limpar(valor):
     return str(valor).strip() if not pd.isna(valor) else ""
 
-
 def carregar_planilha(link):
     link = link.replace("?e=", "?download=1&")
     response = requests.get(link)
     response.raise_for_status()
     return pd.read_excel(BytesIO(response.content), header=None)
-
 
 # ================= ROTA PRINCIPAL =================
 @app.route("/")
@@ -245,7 +246,6 @@ def home():
 
     except Exception as e:
         return f"❌ Erro ao processar: {str(e)}"
-
 
 # ================= EXECUÇÃO =================
 if __name__ == "__main__":
